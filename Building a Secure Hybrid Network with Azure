@@ -1,0 +1,122 @@
+Project: Building a Secure Hybrid Network with Azure
+Objective
+
+Create a secure hybrid networking setup that connects on-premises infrastructure to Azure services, leveraging Azure's networking tools to ensure secure data transmission and access control.
+
+Required Azure Services
+
+Azure Virtual Networks (VNets)
+Azure VPN Gateway
+Network Security Groups (NSGs)
+Azure Bastion
+Azure Private Link
+Azure DNS
+Azure Load Balancer
+Steps to Implement
+1. Setting Up Azure Virtual Network
+
+Create an Azure Virtual Network (VNet):
+Go to the Azure portal and navigate to "Create a resource" > "Networking" > "Virtual Network".
+Configure the VNet with:
+Name: MainNetwork
+Address space: 10.0.0.0/16
+Create subnets such as:
+Subnet Name: WebSubnet, Address Range: 10.0.1.0/24
+Subnet Name: DBSubnet, Address Range: 10.0.2.0/24
+Subnet Name: AdminSubnet, Address Range: 10.0.3.0/24
+Review and create the VNet.
+2. Simulating On-Premises Network
+
+Provision a Simulated On-Premises VNet:
+Create another VNet in the same or different region.
+Name: OnPremNetwork
+Address space: 10.1.0.0/16
+Subnet Name: OnPremSubnet, Address Range: 10.1.1.0/24
+3. Establishing Secure Connectivity
+
+Deploy Azure VPN Gateway:
+
+Navigate to "Create a resource" > "Networking" > "Virtual network gateway".
+Configure:
+Name: MainVPNGateway
+Region: Same as MainNetwork
+Gateway type: VPN
+VPN type: Route-based
+SKU: VpnGw1
+Virtual network: Select MainNetwork
+Public IP address: Create new, name it VPNGatewayPublicIP
+Create the gateway.
+Configure Local Network Gateway:
+
+Navigate to "Create a resource" > "Networking" > "Local network gateway".
+Configure:
+Name: LocalOnPremGateway
+IP address: Placeholder public IP (e.g., 203.0.113.1)
+Address space: 10.1.0.0/16
+Create the gateway.
+Create Site-to-Site VPN Connection:
+
+Go to "Virtual network gateways" > MainVPNGateway.
+Select "Connections" > "Add".
+Configure:
+Name: VPNConnection
+Connection type: Site-to-site (IPsec)
+Local network gateway: LocalOnPremGateway
+Shared key: Set a shared key for the connection
+Create the connection.
+4. Deploying Resources
+
+Deploy VMs in Each Subnet:
+Navigate to "Create a resource" > "Compute" > "Virtual Machine".
+Configure each VM with appropriate settings:
+WebServerVM in WebSubnet
+DatabaseVM in DBSubnet
+AdminVM in AdminSubnet
+Ensure each VM is assigned to the correct subnet.
+5. Configuring Network Access Controls
+
+Set Up Network Security Groups (NSGs):
+Navigate to "Create a resource" > "Networking" > "Network security group".
+Configure each NSG:
+WebNSG for WebSubnet allowing HTTP/HTTPS
+DBNSG for DBSubnet restricting access to WebSubnet
+AdminNSG for AdminSubnet allowing RDP/SSH only from specific IPs
+Associate each NSG with the corresponding subnet.
+6. Securing Administrative Access
+
+Implement Azure Bastion:
+Navigate to "Create a resource" > "Networking" > "Azure Bastion".
+Configure:
+Name: BastionHost
+Virtual network: Select MainNetwork
+Subnet: Create a subnet named AzureBastionSubnet with range 10.0.4.0/24
+Create the Bastion host.
+7. Accessing Azure PaaS Services Privately
+
+Set Up Azure Private Link:
+Navigate to "Create a resource" > "Networking" > "Private Link".
+Create a private endpoint for services like Azure SQL Database within the VNet to ensure secure access.
+8. DNS and Load Balancing
+
+Configure Azure DNS:
+
+Navigate to "Create a resource" > "Networking" > "DNS zone".
+Create a DNS zone and configure custom domain names for VMs and services.
+Deploy Azure Load Balancer:
+
+Navigate to "Create a resource" > "Networking" > "Load Balancer".
+Configure:
+Name: AppLoadBalancer
+Type: Public
+Backend pool: Add VMs from WebSubnet
+Health probes and load balancing rules for HTTP/HTTPS
+9. Performance and Security Testing
+
+Test Connectivity and Performance:
+Validate data transition between on-premises and Azure.
+Ensure security rules are effective by testing unauthorized access attempts.
+10. Monitoring and Auditing
+
+Enable Monitoring and Diagnostics:
+Enable diagnostic logs and metrics for VPN Gateway, NSGs, and other critical resources.
+Set up alerts in Azure Monitor for suspicious activities or performance issues.
